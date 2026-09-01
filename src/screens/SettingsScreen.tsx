@@ -196,3 +196,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 });
+
+export default SettingsScreen;
+

@@ -1,34 +1,32 @@
+// src/components/Card.tsx
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ViewStyle,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, StyleSheet, ViewStyle, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 
-interface CardProps {
+export type Props = {
   title: string;
+  icon?: string; // nombre de icono de Ionicons, ej: 'star', 'heart'
+  iconName?: keyof typeof Ionicons.glyphMap | string;
   description?: string;
-  iconName?: keyof typeof Ionicons.glyphMap;
   badgeText?: string;
   onPress?: () => void;
   children?: React.ReactNode;
   style?: ViewStyle;
-}
+};
 
-export const Card: React.FC<CardProps> = ({
+export default function Card({
   title,
-  description,
+  icon,
   iconName,
+  description,
   badgeText,
   onPress,
   children,
   style,
-}) => {
+}: Props) {
   const { colors } = useTheme();
+  const activeIcon = icon || iconName;
 
   const ContainerComponent = onPress ? TouchableOpacity : View;
 
@@ -45,96 +43,72 @@ export const Card: React.FC<CardProps> = ({
         style,
       ]}
     >
-      <View style={styles.header}>
-        {iconName && (
-          <View
-            style={[
-              styles.iconContainer,
-              { backgroundColor: colors.surface },
-            ]}
-          >
-            <Ionicons name={iconName} size={24} color={colors.primary} />
+      {/* Icono en la parte superior */}
+      {activeIcon && (
+        <Ionicons
+          name={activeIcon as any}
+          size={36}
+          color={colors.primary}
+          style={styles.icon}
+        />
+      )}
+
+      {/* Titulo */}
+      <View style={styles.titleRow}>
+        <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
+        {badgeText && (
+          <View style={[styles.badge, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.badgeText, { color: colors.primary }]}>
+              {badgeText}
+            </Text>
           </View>
         )}
-        <View style={styles.titleContainer}>
-          <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
-          {badgeText && (
-            <View
-              style={[
-                styles.badge,
-                { backgroundColor: colors.surface },
-              ]}
-            >
-              <Text style={[styles.badgeText, { color: colors.primary }]}>
-                {badgeText}
-              </Text>
-            </View>
-          )}
-        </View>
       </View>
 
+      {/* Descripcion */}
       {description ? (
         <Text style={[styles.description, { color: colors.textSecondary }]}>
           {description}
         </Text>
       ) : null}
 
-      {children && <View style={styles.body}>{children}</View>}
+      {children}
     </ContainerComponent>
   );
-};
+}
+
+export { Card };
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 16,
-    padding: 16,
-    marginVertical: 8,
     borderWidth: 1,
+    borderRadius: 14,
+    padding: 20,
+    marginVertical: 8,
+    alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
-    shadowRadius: 6,
+    shadowRadius: 4,
     elevation: 3,
   },
-  header: {
+  icon: { marginBottom: 10 },
+  titleRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-  },
-  iconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
   },
-  titleContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '700',
-    flex: 1,
-  },
+  title: { fontSize: 18, fontWeight: '700', marginBottom: 6, textAlign: 'center' },
+  description: { fontSize: 14, textAlign: 'center', lineHeight: 20 },
   badge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 8,
+    borderRadius: 6,
     marginLeft: 8,
+    marginBottom: 6,
   },
   badgeText: {
     fontSize: 12,
     fontWeight: '600',
-  },
-  description: {
-    fontSize: 14,
-    marginTop: 8,
-    lineHeight: 20,
-  },
-  body: {
-    marginTop: 12,
   },
 });

@@ -149,3 +149,6 @@ const styles = StyleSheet.create({
     marginVertical: 0,
   },
 });
+
+export default ExploreScreen;
+

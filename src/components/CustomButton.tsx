@@ -1,151 +1,109 @@
+// src/components/CustomButton.tsx
 import React from 'react';
-import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  ViewStyle,
-  TextStyle,
-  ActivityIndicator,
-  View,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle, View } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
+import { Ionicons } from '@expo/vector-icons';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
+export type Variant = 'primary' | 'secondary' | 'tertiary';
 
-interface CustomButtonProps {
+export type Props = {
   title: string;
   onPress: () => void;
-  variant?: ButtonVariant;
+  variant?: Variant;
   iconName?: keyof typeof Ionicons.glyphMap;
   iconPosition?: 'left' | 'right';
-  disabled?: boolean;
-  loading?: boolean;
   style?: ViewStyle;
   textStyle?: TextStyle;
-}
+  disabled?: boolean;
+};
 
-export const CustomButton: React.FC<CustomButtonProps> = ({
+export default function CustomButton({
   title,
   onPress,
   variant = 'primary',
   iconName,
   iconPosition = 'left',
-  disabled = false,
-  loading = false,
   style,
   textStyle,
-}) => {
-  const { colors, isDark } = useTheme();
+  disabled,
+}: Props) {
+  const { colors } = useTheme();
 
-  const getButtonStyle = (): ViewStyle => {
-    switch (variant) {
-      case 'secondary':
-        return {
-          backgroundColor: colors.surface,
-          borderWidth: 1,
-          borderColor: colors.border,
-        };
-      case 'tertiary':
-        return {
-          backgroundColor: 'transparent',
-          borderWidth: 1,
-          borderColor: colors.border,
-        };
-      case 'primary':
-      default:
-        return {
-          backgroundColor: colors.primary,
-        };
-    }
+  const getBackground = (): string => {
+    if (variant === 'primary') return colors.primary;
+    if (variant === 'secondary') return colors.surface;
+    return 'transparent'; // tertiary
   };
 
-  const getTextStyle = (): TextStyle => {
-    switch (variant) {
-      case 'secondary':
-        return {
-          color: colors.text,
-        };
-      case 'tertiary':
-        return {
-          color: colors.textSecondary,
-        };
-      case 'primary':
-      default:
-        return {
-          color: isDark ? '#121212' : '#FFFFFF',
-        };
-    }
+  const getTextColor = (): string => {
+    if (variant === 'primary') return '#FFFFFF';
+    if (variant === 'secondary') return colors.text;
+    return colors.primary; // tertiary
   };
 
-  const getIconColor = (): string => {
-    return getTextStyle().color as string;
+  const getBorder = (): ViewStyle => {
+    if (variant === 'tertiary') return { borderWidth: 1.5, borderColor: colors.primary };
+    if (variant === 'secondary') return { borderWidth: 1, borderColor: colors.border };
+    return {};
   };
 
   return (
     <TouchableOpacity
-      activeOpacity={0.8}
-      onPress={onPress}
-      disabled={disabled || loading}
       style={[
-        styles.button,
-        getButtonStyle(),
+        styles.base,
+        { backgroundColor: getBackground() },
+        getBorder(),
         disabled && styles.disabled,
         style,
       ]}
+      onPress={onPress}
+      disabled={disabled}
+      activeOpacity={0.75}
     >
-      {loading ? (
-        <ActivityIndicator color={getIconColor()} size="small" />
-      ) : (
-        <View style={styles.contentContainer}>
-          {iconName && iconPosition === 'left' && (
-            <Ionicons
-              name={iconName}
-              size={20}
-              color={getIconColor()}
-              style={styles.leftIcon}
-            />
-          )}
-          <Text style={[styles.text, getTextStyle(), textStyle]}>
-            {title}
-          </Text>
-          {iconName && iconPosition === 'right' && (
-            <Ionicons
-              name={iconName}
-              size={20}
-              color={getIconColor()}
-              style={styles.rightIcon}
-            />
-          )}
-        </View>
-      )}
+      <View style={styles.content}>
+        {iconName && iconPosition === 'left' && (
+          <Ionicons
+            name={iconName}
+            size={20}
+            color={getTextColor()}
+            style={styles.leftIcon}
+          />
+        )}
+        <Text style={[styles.label, { color: getTextColor() }, textStyle]}>
+          {title}
+        </Text>
+        {iconName && iconPosition === 'right' && (
+          <Ionicons
+            name={iconName}
+            size={20}
+            color={getTextColor()}
+            style={styles.rightIcon}
+          />
+        )}
+      </View>
     </TouchableOpacity>
   );
-};
+}
+
+export { CustomButton };
 
 const styles = StyleSheet.create({
-  button: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 12,
+  base: {
+    borderRadius: 10,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    marginVertical: 6,
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
   },
-  contentContainer: {
+  content: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  text: {
+  label: {
     fontSize: 16,
     fontWeight: '600',
-    textAlign: 'center',
   },
   leftIcon: {
     marginRight: 8,

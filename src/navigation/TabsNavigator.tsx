@@ -1,73 +1,56 @@
+// src/navigation/TabsNavigator.tsx
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
-import { HomeScreen } from '../screens/HomeScreen';
-import { ExploreScreen } from '../screens/ExploreScreen';
-import { SettingsScreen } from '../screens/SettingsScreen';
+import HomeScreen from '../screens/HomeScreen';
+import ExploreScreen from '../screens/ExploreScreen';
+import SettingsScreen from '../screens/SettingsScreen';
 
-export type RootTabParamList = {
-  Inicio: undefined;
-  Explorar: undefined;
-  Ajustes: undefined;
-};
+const Tab = createBottomTabNavigator();
 
-const Tab = createBottomTabNavigator<RootTabParamList>();
-
-export const TabsNavigator: React.FC = () => {
-  const { colors } = useTheme();
+export default function TabsNavigator() {
+  const { colors, isDark } = useTheme();
 
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName: keyof typeof Ionicons.glyphMap = 'help-circle-outline';
-
-          if (route.name === 'Inicio') {
-            iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'Explorar') {
-            iconName = focused ? 'compass' : 'compass-outline';
-          } else if (route.name === 'Ajustes') {
-            iconName = focused ? 'settings' : 'settings-outline';
-          }
-
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
+      screenOptions={{
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
-        tabBarStyle: {
-          backgroundColor: colors.cardBackground,
-          borderTopColor: colors.border,
-          paddingBottom: 5,
-          paddingTop: 5,
-          height: 60,
-        },
-        headerStyle: {
-          backgroundColor: colors.cardBackground,
-          elevation: 2,
-        },
-        headerTitleStyle: {
-          color: colors.text,
-          fontWeight: '700',
-        },
-        headerTintColor: colors.primary,
-      })}
+        tabBarStyle: { backgroundColor: colors.surface },
+        headerStyle: { backgroundColor: colors.surface },
+        headerTintColor: colors.text,
+      }}
     >
       <Tab.Screen
-        name="Inicio"
+        name='Inicio'
         component={HomeScreen}
-        options={{ title: 'Inicio' }}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name='home' size={size} color={color} />
+          ),
+        }}
       />
       <Tab.Screen
-        name="Explorar"
+        name='Explorar'
         component={ExploreScreen}
-        options={{ title: 'Explorar' }}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name='grid' size={size} color={color} />
+          ),
+        }}
       />
       <Tab.Screen
-        name="Ajustes"
+        name='Configuracion'
         component={SettingsScreen}
-        options={{ title: 'Ajustes' }}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name='settings' size={size} color={color} />
+          ),
+        }}
       />
     </Tab.Navigator>
   );
-};
+}
+
+export { TabsNavigator };
