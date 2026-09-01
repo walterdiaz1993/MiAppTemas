@@ -1,201 +1,54 @@
+// src/screens/SettingsScreen.tsx
 import React from 'react';
-import {
-  ScrollView,
-  View,
-  Text,
-  StyleSheet,
-  Switch,
-} from 'react-native';
-import { useTheme } from '../context/ThemeContext';
-import { Card } from '../components/Card';
-import { CustomButton } from '../components/CustomButton';
+import { View, Text, Switch, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../context/ThemeContext';
 
-export const SettingsScreen: React.FC = () => {
-  const { colors, isDark, toggleTheme } = useTheme();
+export default function SettingsScreen() {
+  const { isDark, colors, toggleTheme } = useTheme();
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: colors.background }]}
-      contentContainerStyle={styles.contentContainer}
-      showsVerticalScrollIndicator={false}
-    >
-      <View style={styles.header}>
-        <Text style={[styles.subtitle, { color: colors.primary }]}>
-          CONFIGURACIÓN
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+
+      {/* Icono representativo del tema actual */}
+      <Ionicons
+        name={isDark ? 'moon' : 'sunny'}
+        size={72}
+        color={colors.primary}
+        style={styles.icon}
+      />
+
+      <Text style={[styles.title, { color: colors.text }]}>
+        Tema actual: {isDark ? 'Oscuro' : 'Claro'}
+      </Text>
+
+      <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+        Cambia el tema y observa como toda la interfaz se actualiza automaticamente.
+      </Text>
+
+      {/* Switch para alternar el tema */}
+      <View style={styles.row}>
+        <Text style={[styles.label, { color: colors.text }]}>
+          {isDark ? 'Desactivar modo oscuro' : 'Activar modo oscuro'}
         </Text>
-        <Text style={[styles.title, { color: colors.text }]}>
-          Ajustes de Tema
-        </Text>
-        <Text style={[styles.description, { color: colors.textSecondary }]}>
-          Personaliza la apariencia visual de la aplicación según tus preferencias.
-        </Text>
-      </View>
-
-      <Card title="Preferencia de Tema" iconName="color-palette-outline">
-        <View style={styles.row}>
-          <View style={styles.labelContainer}>
-            <Ionicons
-              name={isDark ? 'moon' : 'sunny'}
-              size={24}
-              color={colors.primary}
-              style={styles.iconMargin}
-            />
-            <View>
-              <Text style={[styles.optionTitle, { color: colors.text }]}>
-                {isDark ? 'Modo Oscuro' : 'Modo Claro'}
-              </Text>
-              <Text
-                style={[styles.optionSubtitle, { color: colors.textSecondary }]}
-              >
-                {isDark
-                  ? 'Fondo oscuro con texto claro'
-                  : 'Fondo claro con texto oscuro'}
-              </Text>
-            </View>
-          </View>
-          <Switch
-            value={isDark}
-            onValueChange={toggleTheme}
-            trackColor={{ false: '#CBD5E1', true: colors.primary }}
-            thumbColor={isDark ? '#FFFFFF' : '#F8FAFC'}
-          />
-        </View>
-      </Card>
-
-      <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>
-          Valores Actuales del Tema
-        </Text>
-
-        <Card title="Paleta de Colores Activa" iconName="eye-outline">
-          <View style={styles.colorRow}>
-            <View
-              style={[
-                styles.colorCircle,
-                { backgroundColor: colors.primary },
-              ]}
-            />
-            <Text style={[styles.colorLabel, { color: colors.text }]}>
-              Primario: <Text style={styles.bold}>{colors.primary}</Text>
-            </Text>
-          </View>
-
-          <View style={styles.colorRow}>
-            <View
-              style={[
-                styles.colorCircle,
-                { backgroundColor: colors.background, borderWidth: 1, borderColor: colors.border },
-              ]}
-            />
-            <Text style={[styles.colorLabel, { color: colors.text }]}>
-              Fondo: <Text style={styles.bold}>{colors.background}</Text>
-            </Text>
-          </View>
-
-          <View style={styles.colorRow}>
-            <View
-              style={[
-                styles.colorCircle,
-                { backgroundColor: colors.cardBackground, borderWidth: 1, borderColor: colors.border },
-              ]}
-            />
-            <Text style={[styles.colorLabel, { color: colors.text }]}>
-              Tarjeta: <Text style={styles.bold}>{colors.cardBackground}</Text>
-            </Text>
-          </View>
-        </Card>
-      </View>
-
-      <View style={styles.buttonSection}>
-        <CustomButton
-          title={isDark ? 'Cambiar a Modo Claro ☀️' : 'Cambiar a Modo Oscuro 🌙'}
-          variant="primary"
-          onPress={toggleTheme}
+        <Switch
+          value={isDark}
+          onValueChange={toggleTheme}
+          thumbColor={isDark ? colors.primary : '#f4f3f4'}
+          trackColor={{ false: '#ccc', true: '#9B59B6' }}
         />
       </View>
-    </ScrollView>
+    </View>
   );
-};
+}
+
+export { SettingsScreen };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  contentContainer: {
-    padding: 20,
-    paddingBottom: 40,
-  },
-  header: {
-    marginBottom: 20,
-  },
-  subtitle: {
-    fontSize: 12,
-    fontWeight: '800',
-    letterSpacing: 1.5,
-    marginBottom: 4,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '800',
-    marginBottom: 6,
-  },
-  description: {
-    fontSize: 15,
-    lineHeight: 22,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 8,
-  },
-  labelContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    marginRight: 12,
-  },
-  iconMargin: {
-    marginRight: 12,
-  },
-  optionTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  optionSubtitle: {
-    fontSize: 13,
-    marginTop: 2,
-  },
-  section: {
-    marginTop: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 8,
-  },
-  colorRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 6,
-  },
-  colorCircle: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    marginRight: 12,
-  },
-  colorLabel: {
-    fontSize: 14,
-  },
-  bold: {
-    fontWeight: '700',
-  },
-  buttonSection: {
-    marginTop: 20,
-  },
+  container: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32 },
+  icon: { marginBottom: 20 },
+  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 12, textAlign: 'center' },
+  subtitle: { fontSize: 15, textAlign: 'center', marginBottom: 40, lineHeight: 22 },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 16 },
+  label: { fontSize: 16 },
 });
-
-export default SettingsScreen;
-
